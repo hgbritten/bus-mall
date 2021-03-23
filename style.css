@@ -1,0 +1,83 @@
+/* howdy */
+*{
+    box-sizing: border-box;
+  }
+  
+  body {
+    background:radial-gradient(#e2e9ff, #fff) fixed;
+    font-family: 'Pangolin', cursive;
+  }
+  
+  header {
+    background: #001aff55;
+  }
+  
+  nav {
+    padding: 20px;
+    font-size: x-large;
+  }
+  
+  a {
+    margin-right: 10px;
+  }
+  
+  main {
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  h1 {
+    font-size: xx-large;
+    text-align: center;
+  }
+  h2 {
+    font-size: x-large;
+    margin-bottom: 10px;
+  }
+  h3 {
+      font-size: xx-large;
+      margin-bottom: 10px;
+  }
+  #product-likes {
+    float: left;
+    width: 13%;
+    margin-right: 2%;
+  }
+
+  #all-products {
+    width: 70%;
+    float: left;
+  }
+
+  #product-pics {
+      display: flex;
+  }
+  
+  figure {
+    width: 50%;
+    float: left;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  img {
+    /* lots of different strategies to handle differently sized images */
+    max-width: 75%;
+    object-fit: contain;
+    height: 600px;
+  }
+  
+  footer {
+    text-align: center;
+    font-size: x-large;
+    padding: 20px;
+    background: #001aff55;
+  }
+  
+  /* with flexbox this usually isn't an issue */
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
