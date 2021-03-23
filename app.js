@@ -2,6 +2,8 @@
 
 // with help from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array and https://javascript.info/task/shuffle and https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp 
 
+// Also with help from the demo class 12
+
 // Model the idea of a Product
 
 // const allProducts = []; replaced by Product.all = [];
@@ -20,7 +22,7 @@ function Product(name, imgUrl) {
     this.imgUrl = imgUrl;
     this.likes = 0; // incrementing this.likes
     this.timesSeen = 0;
-    this.lastSeen = false;
+    // this.lastSeen = false;
     Product.all.push(this);
 }
 
@@ -46,19 +48,51 @@ let middleProduct = null;
 let rightProduct = null;
 
 function pickNewProduct() {
-    roundCtr += 1;
-    // TODO pick randomly
 
-    let arrayShuffle = shuffle(Product.all);
-    console.log(arrayShuffle);
-    leftProduct = arrayShuffle[0];
+    const prevLeft = leftProduct;
+    const prevRight = rightProduct;
+    const prevMiddle = middleProduct;
 
-    // while (thing[0] === leftProduct)
+    shuffle(Product.all);
 
-    middleProduct = arrayShuffle[1];
-    rightProduct = arrayShuffle[2];
+    for (let product of Product.all) {
+        if (product !== prevLeft && product !== prevRight && product !== prevMiddle) {
+            leftProduct = product;
+            break;
+        }
+    }
+
+    for (let product of Product.all) {
+        if (product !== prevLeft && product !== prevRight && product !== prevMiddle && product !== leftProduct) {
+            rightProduct = product;
+            break;
+        }
+    }
+
+    for (let product of Product.all) {
+        if (product !== prevLeft && product !== prevRight && product !== prevMiddle && product !== leftProduct && product !== rightProduct) {
+            middleProduct = product;
+            break;
+        }
+    }
+
     renderProducts();
 }
+
+// function pickNewProduct() {
+//     roundCtr += 1;
+//     // TODO pick randomly
+
+//     let arrayShuffle = shuffle(Product.all);
+//     console.log(arrayShuffle);
+//     leftProduct = arrayShuffle[0];
+
+//     // while (thing[0] === leftProduct)
+
+//     middleProduct = arrayShuffle[1];
+//     rightProduct = arrayShuffle[2];
+//     renderProducts();
+// }
 
 // let totalLikes = shuffle();
 
@@ -120,69 +154,176 @@ new Product('USB', 'img/usb.gif');
 new Product('Water-can', 'img/water-can.jpg');
 new Product('Wine-glass', 'img/wine-glass.jpg');
 
+const handleClickOnProduct = function (event) {
+    // alert(event.target.id); - target is what triggered the event - not always what the event listener is listening to - current target 
+
+    if (roundCtr < ROUND_LIMIT) {
+        const thingWeLiked = event.target;
+        const id = thingWeLiked.id;
+
+
+        if (id === 'left-product-img' || id === 'middle-product-img' || id === 'right-product-img') {
+
+            if (id === 'left-product-img') {
+                leftProduct.likes += 1;
+            } else if (id === 'right-product-img') {
+                rightProduct.likes += 1;
+            } else {
+                middleProduct.likes += 1;
+            }
+
+            leftProduct.timesSeen += 1;
+            rightProduct.timesSeen += 1;
+            middleProduct.timesSeen += 1;
+
+        }
+    }
+
+    roundCtr += 1;
+
+    if (roundCtr < ROUND_LIMIT) {
+
+
+        pickNewProduct();
+    } else {
+        productPicsElem.removeEventListener('click', handleClickOnProduct);
+        alert('Thank you for clicking so fast.');
+        renderLikes();
+        makeAProductChart();
+        makeAProductChart2();
+    }
+}
 
 const productPicsElem = document.getElementById('product-pics');
 productPicsElem.addEventListener('click', handleClickOnProduct);
 
-function handleClickOnProduct(event) {
-    // alert(event.target.id);
-    if (event.target.id === 'left-product-img') {
-        leftProduct.likes += 1;
-    } else if (event.target.id === 'right-product-img') {
-        rightProduct.likes += 1;
-    } else if (event.target.id === 'middle-product-img') {
-        middleProduct.likes += 1;
-    }
-
-    leftProduct.timesSeen += 1;
-    rightProduct.timesSeen += 1;
-    middleProduct.timesSeen += 1;
 
 
-    if (roundCtr === ROUND_LIMIT) {
-        alert('done');
-        productPicsElem.removeEventListener('click', handleClickOnProduct);
-        renderLikes();
-    } else {
-        pickNewProduct();
-    }
-}
-
-let arr = [1, 2, 3]
-
-// shuffle(Product.all);
 
 function shuffle(array) {
-    let currentIndex = array.length, temporaryValue, randomIndex;
-    console.log(currentIndex);
-    while (0 !== currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * i)
+        const temp = array[i]
+        array[i] = array[j]
+        array[j] = temp
     }
-
-    let tempArray = [];
-    for (let i = 0; i < array.length && tempArray.length < 3; i++) {
-        console.log(array[i]);
-        if (array[i].lastSeen === false) {
-            tempArray.push(array[i]);
-        }
-    }
-
-    for (let j = 0; j < array.length; j++) {
-        array[j].lastSeen = false;
-    }
-    console.log(array);
-    for (let k = 0; k < tempArray.length; k++) {
-        array[k].lastSeen = true;
-    }
-
-    return tempArray;
 }
 
+// console.log(Chart);
+function makeAProductChart() {
+
+    const productNamesArray = [];
+    const productLikesArray = [];
+
+    // refactoring opportunity?
+    for (let product of Product.all) {
+        productNamesArray.push(product.name);
+        productLikesArray.push(product.likes);
+    }
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const productChart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+            labels: productNamesArray,
+            datasets: [{
+                label: 'Product Likes',
+                backgroundColor: 'rgb(0, 0, 500)',
+                borderColor: 'rgb(0, 0, 132)',
+                data: productLikesArray
+            }]
+        },
+
+        // Configuration options go here
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+function makeAProductChart2() {
+
+    const productNamesArray = [];
+    const productLikesArray = [];
+
+    // refactoring opportunity?
+    for (let product of Product.all) {
+        productNamesArray.push(product.name);
+        productLikesArray.push(product.likes);
+    }
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const productChart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'pie',
+
+        // The data for our dataset
+        data: {
+            labels: productNamesArray,
+            datasets: [{
+                label: 'Product Likes',
+                backgroundColor: 'rgb(0, 0, 500)',
+                borderColor: 'rgb(0, 0, 132)',
+                data: productLikesArray
+            }]
+        },
+
+        // Configuration options go here
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+
 // shuffle(Product.all);
+
+// function shuffle(array) {
+//     let currentIndex = array.length, temporaryValue, randomIndex;
+//     console.log(currentIndex);
+//     while (0 !== currentIndex) {
+//         randomIndex = Math.floor(Math.random() * currentIndex);
+//         currentIndex -= 1;
+
+//         temporaryValue = array[currentIndex];
+//         array[currentIndex] = array[randomIndex];
+//         array[randomIndex] = temporaryValue;
+//     }
+
+//     let tempArray = [];
+//     for (let i = 0; i < array.length && tempArray.length < 3; i++) {
+//         console.log(array[i]);
+//         if (array[i].lastSeen === false) {
+//             tempArray.push(array[i]);
+//         }
+//     }
+
+//     for (let j = 0; j < array.length; j++) {
+//         array[j].lastSeen = false;
+//     }
+//     console.log(array);
+//     for (let k = 0; k < tempArray.length; k++) {
+//         array[k].lastSeen = true;
+//     }
+
+//     return tempArray;
+// }
+
+shuffle(Product.all);
 
 pickNewProduct();

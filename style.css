@@ -85,3 +85,7 @@
     display: table;
   }
   
+  #myChart {
+    height: 900px;
+    width: 1280px;
+  }
