@@ -40,9 +40,13 @@
   }
   #product-likes {
     float: left;
-    width: 13%;
+    width: 250px;
     margin-right: 2%;
   }
+
+#product-clicks {
+    display: none;
+}
 
   #all-products {
     width: 70%;
