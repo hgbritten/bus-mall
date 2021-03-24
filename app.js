@@ -134,6 +134,8 @@ let roundCtr = 0;
 
 // if (check if localStorage has length if it does we are going to use it) if not we are going to run new Product
 
+//With help from Chance
+
 let checkStorage = getLikes();
 
 if (checkStorage !== null) {
