@@ -8,6 +8,8 @@
 
 // const allProducts = []; replaced by Product.all = [];
 
+
+
 function showResults() {
     let x = document.getElementById("product-clicks");
     if (x.style.display === 'block') {
@@ -36,8 +38,6 @@ function renderLikes() {
         productItemElem.textContent = productPicture.name + ' : ' + productPicture.likes + ', times seen :' + productPicture.timesSeen;
     }
 }
-
-
 
 // object is a container of properties (variables). They can contain strings, numbers, arrays, other objects, etc.
 
@@ -132,27 +132,36 @@ function renderProducts() {
 const ROUND_LIMIT = 25;
 let roundCtr = 0;
 
+// if (check if localStorage has length if it does we are going to use it) if not we are going to run new Product
+
+let checkStorage = getLikes();
+
+if (checkStorage !== null) {
+    Product.all = checkStorage;
+} else {
+    new Product('R2D2 Bag', 'img/bag.jpg');
+    new Product('Banana', 'img/banana.jpg');
+    new Product('Bathroom', 'img/bathroom.jpg');
+    new Product('Boots', 'img/boots.jpg');
+    new Product('Breakfast', 'img/breakfast.jpg');
+    new Product('Bubblegum', 'img/bubblegum.jpg');
+    new Product('Chair', 'img/chair.jpg');
+    new Product('Cthulhu', 'img/cthulhu.jpg');
+    new Product('Dog-duck', 'img/dog-duck.jpg');
+    new Product('Dragon', 'img/dragon.jpg');
+    new Product('Pen', 'img/pen.jpg');
+    new Product('Pet-sweep', 'img/pet-sweep.jpg');
+    new Product('Scissors', 'img/scissors.jpg');
+    new Product('Shark', 'img/shark.jpg');
+    new Product('Sweep', 'img/sweep.png');
+    new Product('Tauntaun', 'img/tauntaun.jpg');
+    new Product('Unicorn', 'img/unicorn.jpg');
+    new Product('USB', 'img/usb.gif');
+    new Product('Water-can', 'img/water-can.jpg');
+    new Product('Wine-glass', 'img/wine-glass.jpg');
+}
+
 //Create the Products
-new Product('R2D2 Bag', 'img/bag.jpg');
-new Product('Banana', 'img/banana.jpg');
-new Product('Bathroom', 'img/bathroom.jpg');
-new Product('Boots', 'img/boots.jpg');
-new Product('Breakfast', 'img/breakfast.jpg');
-new Product('Bubblegum', 'img/bubblegum.jpg');
-new Product('Chair', 'img/chair.jpg');
-new Product('Cthulhu', 'img/cthulhu.jpg');
-new Product('Dog-duck', 'img/dog-duck.jpg');
-new Product('Dragon', 'img/dragon.jpg');
-new Product('Pen', 'img/pen.jpg');
-new Product('Pet-sweep', 'img/pet-sweep.jpg');
-new Product('Scissors', 'img/scissors.jpg');
-new Product('Shark', 'img/shark.jpg');
-new Product('Sweep', 'img/sweep.png');
-new Product('Tauntaun', 'img/tauntaun.jpg');
-new Product('Unicorn', 'img/unicorn.jpg');
-new Product('USB', 'img/usb.gif');
-new Product('Water-can', 'img/water-can.jpg');
-new Product('Wine-glass', 'img/wine-glass.jpg');
 
 const handleClickOnProduct = function (event) {
     // alert(event.target.id); - target is what triggered the event - not always what the event listener is listening to - current target 
@@ -191,6 +200,7 @@ const handleClickOnProduct = function (event) {
         renderLikes();
         makeAProductChart();
         makeAProductChart2();
+        setLikes();
     }
 }
 
@@ -324,6 +334,31 @@ function makeAProductChart2() {
 //     return tempArray;
 // }
 
+function getLikes() {
+    let likes = localStorage.getItem('likes')
+    // console.log(parsedLikes);
+
+    if (likes !== null) {
+        let parsedLikes = JSON.parse(likes);
+        return parsedLikes;
+        // for (let votes of parsedLikes) {
+        //     new Product(votes.name, votes.imgUrl, votes.likes, votes.timesSeen);
+        // }
+    } else {
+        return null;
+    }
+
+}
+
+function setLikes() {
+    console.log(Product.all)
+    let stringifiedLikes = JSON.stringify(Product.all);
+    console.log(stringifiedLikes);
+    localStorage.setItem('likes', stringifiedLikes);
+}
+
 shuffle(Product.all);
 
 pickNewProduct();
+
+getLikes();
